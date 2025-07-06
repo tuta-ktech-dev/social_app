@@ -3,27 +3,25 @@ package main
 import (
 	"context"
 	"fmt"
-	"time"
+	"log"
 
-	"github.com/redis/go-redis/v9"
+	"social-app/config"
 )
 
-var ctx = context.Background()
-
 func main() {
-	rdb := redis.NewClient(&redis.Options{
-		Addr: "redis:6379", // redis container name in docker-compose
-	})
+	fmt.Println("Social App Starting...")
 
-	// Test set + get
-	err := rdb.Set(ctx, "user:online:123", "1", 30*time.Second).Err()
-	if err != nil {
-		panic(err)
-	}
+	// Initialize Redis configuration
+	redisConfig := config.NewRedisConfig()
+	redisClient := redisConfig.NewClient()
 
-	val, err := rdb.Get(ctx, "user:online:123").Result()
+	// Test Redis connection
+	ctx := context.Background()
+	pong, err := redisClient.Ping(ctx).Result()
 	if err != nil {
-		panic(err)
+		log.Fatal("Failed to connect to Redis:", err)
 	}
-	fmt.Println("user online status:", val)
+	fmt.Println("Redis connected:", pong)
+
+	fmt.Println("\nSocial App running successfully!")
 }

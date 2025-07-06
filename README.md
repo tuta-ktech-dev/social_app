@@ -12,13 +12,23 @@ A basic social network backend project built with Go and Redis, containerized us
 ## Project Structure
 ```
 social_app/
-  app/                # Go application source code
-    Dockerfile        # Build Go app image
-    main.go           # Main entry point
-    go.mod, go.sum    # Go dependencies
-  redis.conf          # Redis configuration
-  docker-compose.yml  # Multi-service orchestration
-  Makefile            # Automation commands
+  app/                      # Go application source code
+    config/                 # Configuration files
+      redis.go              # Redis connection setup
+    internal/               # Internal application code
+      domain/               # Domain models and interfaces
+        user_status.go      # User status domain logic
+      repository/           # Data access layer
+        redis_user_status.go # Redis implementation for user status
+    Dockerfile              # Build Go app image
+    main.go                 # Main entry point
+    go.mod, go.sum          # Go dependencies
+  docs/                     # Documentation
+    users/                  # User-related features docs
+      online-status/        # User online status documentation
+  redis.conf                # Redis configuration
+  docker-compose.yml        # Multi-service orchestration
+  Makefile                  # Automation commands
 ```
 
 ## Prerequisites

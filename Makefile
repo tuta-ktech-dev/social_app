@@ -22,7 +22,7 @@ clean:
 
 # View Go app logs
 logs:
-	docker logs go-chat-app
+	docker logs go-social-app
 
 # View Redis logs
 logs-redis:
@@ -30,8 +30,17 @@ logs-redis:
 
 # Enter app container shell
 shell:
-	docker exec -it go-chat-app /bin/bash
+	docker exec -it go-social-app /bin/bash
 
 # Enter Redis CLI in container
 redis-cli:
 	docker exec -it redis-server redis-cli
+
+# Run tests in container
+test:
+	docker exec -it go-social-app go run cmd/test/main.go
+
+# Run tests with rebuild
+test-build:
+	docker compose up --build -d
+	docker exec -it go-social-app go run cmd/test/main.go
