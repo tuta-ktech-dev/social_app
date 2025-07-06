@@ -38,7 +38,7 @@ func main() {
 func runUserStatusTests(repo domain.UserStatusRepository) {
 	// Test 1: Set user online
 	fmt.Println("\n1. Setting user 123 online...")
-	err := repo.SetUserStatus("123", domain.StatusOnline, domain.DefaultTTL)
+	err := repo.SetUserStatus("123", domain.StatusOnline, domain.OnlineTTL)
 	if err != nil {
 		log.Printf("❌ Error setting user online: %v", err)
 	} else {
@@ -56,13 +56,14 @@ func runUserStatusTests(repo domain.UserStatusRepository) {
 
 	// Test 3: Set multiple users with different statuses
 	fmt.Println("\n3. Setting multiple users status...")
-	repo.SetUserStatus("456", domain.StatusOnline, domain.DefaultTTL)
-	repo.SetUserStatus("789", domain.StatusOffline, 24*time.Hour)
-	fmt.Println("✅ Set user 456 online, user 789 offline")
+	repo.SetUserStatus("456", domain.StatusOnline, domain.OnlineTTL)
+	repo.SetUserStatus("789", domain.StatusAway, domain.AwayTTL)
+	repo.SetUserStatus("101", domain.StatusOffline, domain.OfflineTTL)
+	fmt.Println("✅ Set user 456 online, user 789 away, user 101 offline")
 
 	// Test 4: Get multiple users status
 	fmt.Println("\n4. Getting multiple users status...")
-	userIDs := []string{"123", "456", "789", "999"}
+	userIDs := []string{"123", "456", "789", "101", "999"}
 	statuses, err := repo.GetMultipleUserStatus(userIDs)
 	if err != nil {
 		log.Printf("❌ Error getting multiple user status: %v", err)
@@ -75,7 +76,7 @@ func runUserStatusTests(repo domain.UserStatusRepository) {
 
 	// Test 5: Refresh TTL (heartbeat)
 	fmt.Println("\n5. Refreshing user 123 TTL (heartbeat)...")
-	err = repo.RefreshUserStatusTTL("123", domain.DefaultTTL)
+	err = repo.RefreshUserStatusTTL("123", domain.OnlineTTL)
 	if err != nil {
 		log.Printf("❌ Error refreshing TTL: %v", err)
 	} else {

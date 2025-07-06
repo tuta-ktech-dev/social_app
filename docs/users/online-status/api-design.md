@@ -32,8 +32,8 @@ service UserStatusService {
 enum UserStatus {
   UNKNOWN = 0;
   ONLINE = 1;
-  OFFLINE = 2;
-  AWAY = 3;
+  AWAY = 2;
+  OFFLINE = 3;
 }
 
 // Request/Response Messages
@@ -168,9 +168,15 @@ message UserStatusData {
     },
     {
       "user_id": "456",
-      "status": "OFFLINE",
+      "status": "AWAY",
       "last_seen": 1704067100,
       "timestamp": 1704067100
+    },
+    {
+      "user_id": "789",
+      "status": "OFFLINE",
+      "last_seen": 1704067050,
+      "timestamp": 1704067050
     }
   ]
 }
@@ -191,7 +197,7 @@ message UserStatusData {
 ```json
 {
   "user_id": "456",
-  "status": "OFFLINE",
+  "status": "AWAY",
   "timestamp": 1704067200
 }
 ```

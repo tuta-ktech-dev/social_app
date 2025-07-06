@@ -13,8 +13,8 @@ This feature allows the system to track and determine whether users are currentl
 ### Data Structure
 ```
 Key: "user:status:{user_id}"
-Value: "online" | "offline"
-TTL: 30 seconds (configurable)
+Value: "online" | "away" | "offline" | (nil for unknown)
+TTL: 30s (online) | 10m (away) | 24h (offline) | expired (unknown)
 ```
 
 ## gRPC Methods
@@ -28,7 +28,7 @@ rpc SetUserStatus(SetUserStatusRequest) returns (SetUserStatusResponse);
 ```protobuf
 message SetUserStatusRequest {
   string user_id = 1;
-  UserStatus status = 2;  // ONLINE or OFFLINE
+  UserStatus status = 2;  // ONLINE, AWAY, OFFLINE, or UNKNOWN
 }
 ```
 
@@ -100,7 +100,7 @@ message SubscribeStatusUpdatesRequest {
 ```protobuf
 message StatusUpdateEvent {
   string user_id = 1;
-  UserStatus status = 2;  // ONLINE or OFFLINE
+  UserStatus status = 2;  // ONLINE, AWAY, OFFLINE, or UNKNOWN
   int64 timestamp = 3;
 }
 ```
@@ -147,7 +147,9 @@ message SendHeartbeatResponse {
 1. Client calls GetUserStatus(user_id) via gRPC
 2. Server checks Redis for key existence and value
 3. If key exists and value = "online" → online
-4. If key doesn't exist or value = "offline" → offline
+4. If key exists and value = "away" → away
+5. If key exists and value = "offline" → offline
+6. If key doesn't exist → unknown
 
 ## Configuration
 
@@ -179,7 +181,7 @@ notify-keyspace-events Ex
 
 ### Error Codes
 - `USER_NOT_FOUND`: User ID doesn't exist
-- `INVALID_STATUS`: Status value is not "online" or "offline"
+- `INVALID_STATUS`: Status value is not "online", "away", "offline", or "unknown"
 - `REDIS_ERROR`: Redis connection or operation failed
 - `UNAUTHORIZED`: User not authorized to update status
 
@@ -214,6 +216,6 @@ notify-keyspace-events Ex
 
 ## Future Enhancements
 - Last seen timestamp tracking
-- User activity levels (active, idle, away)
 - Presence in specific channels/rooms
 - Integration with push notifications 
+- Advanced activity detection 

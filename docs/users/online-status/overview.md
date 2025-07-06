@@ -38,11 +38,11 @@ This feature is divided into multiple components:
 ## Key Requirements
 
 ### Functional Requirements
-- Track user online/offline status
+- Track user status: online/away/offline/unknown
 - Real-time status updates via gRPC streaming
-- Automatic offline detection (heartbeat mechanism)
+- Automatic status transitions (heartbeat mechanism)
 - Bulk status queries for multiple users
-- Status persistence with configurable TTL
+- Status persistence with different TTL values
 
 ### Non-Functional Requirements
 - **Performance**: Handle 10k+ concurrent users

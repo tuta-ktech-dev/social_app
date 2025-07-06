@@ -44,3 +44,21 @@ test:
 test-build:
 	docker compose up --build -d
 	docker exec -it go-social-app go run cmd/test/main.go
+
+# ===== DEVELOPMENT COMMANDS =====
+
+# Start development environment with hot reload
+dev:
+	docker compose -f docker-compose.dev.yml up --build
+
+# Start dev in background
+dev-bg:
+	docker compose -f docker-compose.dev.yml up --build -d
+
+# Stop development environment
+dev-down:
+	docker compose -f docker-compose.dev.yml down
+
+# View dev logs
+dev-logs:
+	docker compose -f docker-compose.dev.yml logs -f app

@@ -9,12 +9,15 @@ user:status:{user_id}
 
 ### Value Structure
 ```
-"online" | "offline"
+"online" | "away" | "offline" | (nil for unknown)
 ```
 
 ### TTL (Time To Live)
 ```
-30 seconds (configurable)
+online:  30 seconds
+away:    10 minutes  
+offline: 24 hours
+unknown: no key (expired)
 ```
 
 ## Data Operations
@@ -28,7 +31,16 @@ SET user:status:123 "online" EX 30
 - **TTL**: 30 seconds
 - **Action**: User becomes online, auto-expire after 30s if no heartbeat
 
-### 2. Set User Offline
+### 2. Set User Away
+```redis
+SET user:status:123 "away" EX 600
+```
+- **Key**: `user:status:123`
+- **Value**: `"away"`
+- **TTL**: 10 minutes (600 seconds)
+- **Action**: User idle but still logged in
+
+### 3. Set User Offline
 ```redis
 SET user:status:123 "offline" EX 86400
 ```
@@ -37,29 +49,30 @@ SET user:status:123 "offline" EX 86400
 - **TTL**: 24 hours (longer TTL for offline status)
 - **Action**: Explicitly set user offline
 
-### 3. Get User Status
+### 4. Get User Status
 ```redis
 GET user:status:123
 ```
-- **Returns**: `"online"` | `"offline"` | `nil`
+- **Returns**: `"online"` | `"away"` | `"offline"` | `nil`
 - **Logic**: 
   - If key exists and value = "online" → User is online
+  - If key exists and value = "away" → User is away (idle)
   - If key exists and value = "offline" → User is offline
-  - If key doesn't exist → User is offline (expired)
+  - If key doesn't exist → User status is unknown (expired)
 
-### 4. Get Multiple Users Status
+### 5. Get Multiple Users Status
 ```redis
 MGET user:status:123 user:status:456 user:status:789
 ```
-- **Returns**: Array of values `["online", "offline", nil]`
+- **Returns**: Array of values `["online", "away", "offline", nil]`
 - **Logic**: Same as single get, but for multiple users
 
-### 5. Refresh Online Status (Heartbeat)
+### 6. Refresh Status (Heartbeat)
 ```redis
 EXPIRE user:status:123 30
 ```
-- **Action**: Reset TTL to 30 seconds
-- **Condition**: Only if current value is "online"
+- **Action**: Reset TTL to 30 seconds and transition away→online
+- **Condition**: Works for both "online" and "away" status
 
 ## Redis Configuration
 

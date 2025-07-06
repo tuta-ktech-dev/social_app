@@ -1,0 +1,24 @@
+{
+  "name": "Social App Go Development",
+  "dockerComposeFile": "../docker-compose.dev.yml",
+  "service": "app",
+  "workspaceFolder": "/app",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.go",
+        "ms-vscode.vscode-json",
+        "redhat.vscode-yaml",
+        "ms-vscode.vscode-docker"
+      ],
+      "settings": {
+        "go.gopath": "/go",
+        "go.goroot": "/usr/local/go",
+        "go.toolsManagement.checkForUpdates": "local"
+      }
+    }
+  },
+  "forwardPorts": [8080, 6379],
+  "postCreateCommand": "go mod download",
+  "remoteUser": "root"
+} 
