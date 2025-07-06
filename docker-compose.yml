@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  redis:
+    image: redis:7
+    container_name: redis-server
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      - socialnet
+
+  app:
+    build: ./app
+    container_name: go-social-app
+    depends_on:
+      - redis
+    networks:
+      - socialnet
+    volumes:
+      - ./app:/app
+
+networks:
+  socialnet:
+    driver: bridge
